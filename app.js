@@ -1,5 +1,7 @@
 let createError = require('http-errors');
+const dotenv = require('dotenv')
 let express = require('express');
+
 let path = require('path');
 let cookieParser = require('cookie-parser');
 let logger = require('morgan');
@@ -15,7 +17,7 @@ var mongoDB = 'mongodb+srv://Ravi:<ravi3030>@cluster0-6omis.mongodb.net/Ravi?ret
 mongoose.connect(mongoDB, { useNewUrlParser: true,useUnifiedTopology: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
+dotenv.config({ path: '.env' })
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
