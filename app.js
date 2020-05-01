@@ -8,18 +8,24 @@ let logger = require('morgan');
 
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
+let catalogRouter = require('./routes/catalog'); 
+let compression = require('compression');
+let helmet = require('helmet');
+
 
 let app = express();
+app.use(helmet());
 
 //Set up mongoose connection
 const mongoose = require('mongoose');
-var mongoDB = 'mongodb+srv://Ravi:<ravi3030>@cluster0-6omis.mongodb.net/Ravi?retryWrites=true&w=majority';
+const dev_db_url = 'mongodb+srv://cooluser:coolpassword@cluster0-mbdj7.mongodb.net/local_library?retryWrites=true'
+const mongoDB = process.env.MONGODB_URI || dev_db_url;
 mongoose.connect(mongoDB, { useNewUrlParser: true,useUnifiedTopology: true });
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 dotenv.config({ path: '.env' })
 
-dev_db_url = process.env.ATLAS_URI
+//dev_db_url = process.env.ATLAS_URI
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -28,10 +34,12 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(compression()); //Compress all routes
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/catalog', catalogRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
